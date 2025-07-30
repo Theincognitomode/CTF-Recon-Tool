@@ -57,10 +57,17 @@ web_scan() {
         fi
     fi
 
-    echo -e "${YELLOW}Enter web port (default 80):${NC}"
-    read PORT
-    PORT=${PORT:-80}
+    echo -e "${YELLOW}Do you want to add a port address to the target? (y/n):${NC}"
+    read ADD_PORT
 
+    if [[ "$ADD_PORT" == "y" || "$ADD_PORT" == "Y" ]]; then
+        echo -e "${YELLOW}Enter web port (default 80):${NC}"
+        read PORT
+        PORT=${PORT:-80}
+    else
+        PORT="" 
+    fi
+    
     echo -e "${YELLOW}Choose protocol: [1] HTTP (default)  [2] HTTPS${NC}"
     read PROTOCOL_CHOICE
     if [[ "$PROTOCOL_CHOICE" == "2" ]]; then
@@ -84,7 +91,11 @@ web_scan() {
         fi
     fi
 
-    URL="${SCHEME}://${WEB_TARGET}:${PORT}"
+    if [[ -n "$PORT" ]]; then
+        URL="${SCHEME}://${WEB_TARGET}:${PORT}"
+    else
+        URL="${SCHEME}://${WEB_TARGET}"
+
     echo -e "${YELLOW}Running web directory scan on $URL ...${NC}"
 
     echo -e "${BLUE}[*] Starting Gobuster...${NC}"
@@ -241,7 +252,7 @@ main() {
         read choice
 
         case $choice in
-            1) set_target ;;
+            1) set_target ; continue;;
             2) quick_scan ;;
             3) full_scan ;;
             4) web_scan ;;
