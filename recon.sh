@@ -270,7 +270,7 @@ main() {
 
         case $choice in
             1) set_target ; continue;;
-            2) quick_scan ;;
+            2) quick_scan ; continue;;
             3) full_scan ;;
             4) web_scan ;;
 	    5) ftp_connect ;;
