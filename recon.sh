@@ -95,7 +95,8 @@ web_scan() {
         URL="${SCHEME}://${WEB_TARGET}:${PORT}"
     else
         URL="${SCHEME}://${WEB_TARGET}"
-
+    fi
+    
     echo -e "${YELLOW}Running web directory scan on $URL ...${NC}"
 
     echo -e "${BLUE}[*] Starting Gobuster...${NC}"
