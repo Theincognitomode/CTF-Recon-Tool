@@ -23,25 +23,39 @@ set_target() {
     echo -e "${GREEN}Target set to: $TARGET${NC}"
 }
 
+handle_scan_interrupt() {
+    echo -e "\nScan interrupted Returning to menu..."
+}
+
 quick_scan() {
+    IN_SCAN=true
+    trap handle_scan_interrupt SIGINT
     if [ -z "$TARGET" ]; then
         echo -e "${RED}No target set!${NC}"
         return
     fi
     echo -e "${YELLOW}Running quick nmap scan on $TARGET...${NC}"
     nmap -sS -T4 --top-ports 1000 $TARGET
+    trap handle_main_interrupt SIGINT
+    IN_SCAN=false
 }
 
 full_scan() {
+    IN_SCAN=true
+    trap handle_scan_interrupt SIGINT
     if [ -z "$TARGET" ]; then
         echo -e "${RED}No target set!${NC}"
         return
     fi
     echo -e "${YELLOW}Running full nmap scan on $TARGET...${NC}"
     nmap -sS -sV -O -A -T4 -p- $TARGET
+    trap handle_main_interrupt SIGINT
+    IN_SCAN=false
 }
 
 web_scan() {
+    IN_SCAN=true
+    trap handle_scan_interrupt SIGINT
     echo -e "${YELLOW}Current web target: ${GREEN}${WEB_TARGET:-Not Set}${NC}"
     echo -e "${YELLOW}Do you want to set/change the web target? (y/n):${NC}"
     read CHANGE_WEB
@@ -108,6 +122,8 @@ web_scan() {
     else
         echo "$OUTPUT"
     fi
+    trap handle_main_interrupt SIGINT
+    IN_SCAN=false
 }
 
 ftp_connect() {
